@@ -3,8 +3,11 @@ import axios from "axios";
 
 export const StoreContext = createContext();
 
+// ✅ Base URL from environment
 const BASE_URL = import.meta.env.VITE_API_URL;
-const API = `${BASE_URL}/products`;
+
+// ✅ Correct API route (VERY IMPORTANT)
+const API = `${BASE_URL}/api/products`;
 
 export const StoreProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
@@ -12,6 +15,7 @@ export const StoreProvider = ({ children }) => {
   // 🔄 FETCH PRODUCTS
   const fetchProducts = async () => {
     try {
+      console.log("Fetching from:", API); // 🔍 Debug
       const res = await axios.get(API);
       setProducts(res.data);
     } catch (err) {
@@ -43,7 +47,7 @@ export const StoreProvider = ({ children }) => {
     }
   };
 
-  // ✏️ UPDATE PRODUCT (FIXED ✅)
+  // ✏️ UPDATE PRODUCT
   const updateProduct = async (id, data) => {
     try {
       await axios.put(`${API}/${id}`, data);
@@ -53,11 +57,10 @@ export const StoreProvider = ({ children }) => {
     }
   };
 
-  // 📉 UPDATE STOCK (BACKEND SAFE ✅)
+  // 📉 UPDATE STOCK
   const updateStock = async (id, qty) => {
     try {
       const product = products.find((p) => p._id === id);
-
       if (!product) return;
 
       await axios.put(`${API}/${id}`, {
