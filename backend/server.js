@@ -15,14 +15,14 @@ connectDB();
 const app = express();
 
 // Middleware
-app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    "https://biz-saathi-omega.vercel.app"
-  ],
-  credentials: true
-}));
 app.use(express.json());
+
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+  })
+);
 
 // Routes
 app.use("/api/products", productRoutes);
