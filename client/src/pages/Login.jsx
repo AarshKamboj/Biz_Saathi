@@ -1,6 +1,5 @@
 import { useState } from "react";
 import axios from "axios";
-import { GoogleLogin } from "@react-oauth/google";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -111,34 +110,7 @@ const Login = () => {
           </button>
         </form>
 
-        <div className="mt-4">
-          <GoogleLogin
-            onSuccess={async (credentialResponse) => {
-              try {
-                const res = await axios.post(
-                  `${API_URL}/api/auth/google`,
-                  {
-                    token: credentialResponse.credential,
-                  }
-                );
-
-                localStorage.setItem(
-                  "user",
-                  JSON.stringify(res.data)
-                );
-
-                window.location.href = "/dashboard";
-              } catch (err) {
-                console.error("Google login failed:", err);
-                setError("Google login failed");
-              }
-            }}
-            onError={() => {
-              console.log("Google Login Failed");
-              setError("Google Login Failed");
-            }}
-          />
-        </div>
+        
 
         <p className="text-center mt-4 text-sm">
           {isLogin

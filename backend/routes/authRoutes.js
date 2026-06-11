@@ -1,18 +1,16 @@
 import express from "express";
 import User from "../models/User.js";
 import jwt from "jsonwebtoken";
-import { OAuth2Client } from "google-auth-library";
 
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const router = express.Router();
 
 // 🔐 GENERATE TOKEN
 const generateToken = (user) => {
   return jwt.sign(
-    { id: user._id, role: user.role },
-    "secret123",
-    { expiresIn: "7d" }
-  );
+  { id: user._id, role: user.role },
+  process.env.JWT_SECRET,
+  { expiresIn: "7d" }
+);
 };
 
 // ================= REGISTER =================
@@ -47,45 +45,6 @@ router.post("/register", async (req, res) => {
   } catch (err) {
     console.error("REGISTER ERROR:", err); // 👈 IMPORTANT DEBUG
     res.status(500).json({ message: err.message });
-  }
-});
-
-router.post("/google", async (req, res) => {
-  try {
-    const { token } = req.body;
-
-    const ticket = await client.verifyIdToken({
-      idToken: token,
-      audience: "988883024989-95qhdccob7udhusib8iclecdet16f6cl.apps.googleusercontent.com",
-    });
-
-    const payload = ticket.getPayload();
-    const { email, name } = payload;
-
-    let user = await User.findOne({ email });
-
-    if (!user) {
-      user = await User.create({
-        name,
-        email,
-        password: "google_login",
-        role: "employee",
-      });
-    }
-
-    const jwtToken = generateToken(user);
-
-    res.json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      token: jwtToken,
-    });
-
-  } catch (err) {
-    console.error("GOOGLE AUTH ERROR:", err);
-    res.status(401).json({ message: "Google auth failed" });
   }
 });
 
