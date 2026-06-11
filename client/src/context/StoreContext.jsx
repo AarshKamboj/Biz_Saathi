@@ -9,6 +9,9 @@ const BASE_URL = import.meta.env.VITE_API_URL;
 // ✅ Correct API route (VERY IMPORTANT)
 const API = `${BASE_URL}/api/products`;
 
+console.log("BASE_URL =", BASE_URL);
+console.log("API =", API);
+
 export const StoreProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
 

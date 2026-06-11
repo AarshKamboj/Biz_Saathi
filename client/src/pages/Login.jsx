@@ -1,11 +1,10 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { GoogleLogin } from "@react-oauth/google";
 
-const Login = () => {
-  const navigate = useNavigate();
+const API_URL = import.meta.env.VITE_API_URL;
 
+const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [error, setError] = useState("");
 
@@ -16,37 +15,40 @@ const Login = () => {
     role: "employee",
   });
 
-  // 🔐 HANDLE SUBMIT
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
 
     try {
       const url = isLogin
-        ? "https://bizsaathi.onrender.com/api/auth/login"
-        : "https://bizsaathi.onrender.com/api/auth/register";
+        ? `${API_URL}/api/auth/login`
+        : `${API_URL}/api/auth/register`;
+
+      console.log("Sending request to:", url);
 
       const res = await axios.post(url, form);
 
-      // LOGIN
       if (isLogin) {
         localStorage.setItem("user", JSON.stringify(res.data));
         window.location.href = "/dashboard";
       } else {
-        alert("Signup successful! Now login.");
+        alert("Signup successful! Please login.");
         setIsLogin(true);
       }
-
     } catch (err) {
-      setError(err.response?.data?.message || "Something went wrong");
+      console.error(err);
+
+      setError(
+        err.response?.data?.message ||
+          err.message ||
+          "Something went wrong"
+      );
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600">
-
       <div className="bg-white p-8 rounded-2xl shadow-xl w-96">
-
-        {/* TITLE */}
         <h2 className="text-2xl font-bold text-center mb-6">
           {isLogin ? "Login to BizSaathi 🚀" : "Create Account"}
         </h2>
@@ -55,9 +57,7 @@ const Login = () => {
           <p className="text-red-500 text-sm mb-3 text-center">{error}</p>
         )}
 
-        {/* FORM */}
         <form onSubmit={handleSubmit} className="space-y-4">
-
           {!isLogin && (
             <input
               type="text"
@@ -103,43 +103,48 @@ const Login = () => {
             </select>
           )}
 
-          <button className="w-full bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700 transition">
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700 transition"
+          >
             {isLogin ? "Login" : "Sign Up"}
           </button>
         </form>
 
-        {/* GOOGLE LOGIN */}
         <div className="mt-4">
           <GoogleLogin
             onSuccess={async (credentialResponse) => {
               try {
-                // 🔗 SEND TOKEN TO BACKEND
                 const res = await axios.post(
-                  "https://bizsaathi.onrender.com/api/auth/google",
+                  `${API_URL}/api/auth/google`,
                   {
                     token: credentialResponse.credential,
                   }
                 );
 
-                // ✅ SAVE USER
-                localStorage.setItem("user", JSON.stringify(res.data));
+                localStorage.setItem(
+                  "user",
+                  JSON.stringify(res.data)
+                );
 
-                // ✅ REDIRECT
                 window.location.href = "/dashboard";
-
               } catch (err) {
-                console.log("Google login failed", err);
+                console.error("Google login failed:", err);
+                setError("Google login failed");
               }
             }}
             onError={() => {
               console.log("Google Login Failed");
+              setError("Google Login Failed");
             }}
           />
         </div>
 
-        {/* TOGGLE */}
         <p className="text-center mt-4 text-sm">
-          {isLogin ? "Don't have an account?" : "Already have an account?"}
+          {isLogin
+            ? "Don't have an account?"
+            : "Already have an account?"}
+
           <span
             onClick={() => {
               setIsLogin(!isLogin);
@@ -150,7 +155,6 @@ const Login = () => {
             {isLogin ? "Sign Up" : "Login"}
           </span>
         </p>
-
       </div>
     </div>
   );
