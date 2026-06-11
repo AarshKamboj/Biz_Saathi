@@ -19,7 +19,11 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: true,
+    origin: [
+    "http://localhost:5173",
+    "https://biz-saathi-53hl.vercel.app",
+    "https://biz-saathi-omega.vercel.app"
+  ],
     credentials: true,
   })
 );
