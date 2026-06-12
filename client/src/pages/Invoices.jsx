@@ -13,7 +13,8 @@ const Invoices = () => {
 
   const fetchInvoices = async () => {
     try {
-      const res = await axios.get("https://bizsaathi.onrender.com/api/invoice");
+      const API_URL = import.meta.env.VITE_API_URL;
+      const res = await axios.get(`${API_URL}/api/invoice`);
       setInvoices(res.data);
     } catch (err) {
       console.error(err);
