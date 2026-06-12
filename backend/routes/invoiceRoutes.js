@@ -6,6 +6,8 @@ const router = express.Router();
 // CREATE INVOICE
 router.post("/", async (req, res) => {
   try {
+    console.log("Invoice Data:", req.body);
+
     const count = await Invoice.countDocuments();
 
     const newInvoice = new Invoice({
@@ -14,9 +16,20 @@ router.post("/", async (req, res) => {
     });
 
     await newInvoice.save();
-    res.json(newInvoice);
+
+    res.json({
+      success: true,
+      invoice: newInvoice,
+    });
+
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("INVOICE ERROR:", err);
+
+    res.status(500).json({
+      success: false,
+      error: err.message,
+      stack: err.stack,
+    });
   }
 });
 
