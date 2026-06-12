@@ -20,11 +20,11 @@ app.use(express.json());
 app.use(
   cors({
     origin: [
-    "http://localhost:5173",
-    "https://biz-saathi-53hl.vercel.app",
-    "https://biz-saathi-omega.vercel.app"
-  ],
+      "http://localhost:5173",
+      "https://biz-saathi-kappa.vercel.app",
+    ],
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   })
 );
 
