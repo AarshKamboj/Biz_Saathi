@@ -1,9 +1,12 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 const Login = () => {
+  const navigate = useNavigate();
+
   const [isLogin, setIsLogin] = useState(true);
   const [error, setError] = useState("");
 
@@ -29,18 +32,20 @@ const Login = () => {
 
       if (isLogin) {
         localStorage.setItem("user", JSON.stringify(res.data));
-        window.location.href = "/dashboard";
+
+        // Navigate to dashboard
+        navigate("/dashboard");
       } else {
         alert("Signup successful! Please login.");
         setIsLogin(true);
       }
     } catch (err) {
-      console.error(err);
+      console.error("Login Error:", err);
 
       setError(
         err.response?.data?.message ||
-          err.message ||
-          "Something went wrong"
+        err.message ||
+        "Something went wrong"
       );
     }
   };
@@ -53,7 +58,9 @@ const Login = () => {
         </h2>
 
         {error && (
-          <p className="text-red-500 text-sm mb-3 text-center">{error}</p>
+          <p className="text-red-500 text-sm mb-3 text-center">
+            {error}
+          </p>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -109,8 +116,6 @@ const Login = () => {
             {isLogin ? "Login" : "Sign Up"}
           </button>
         </form>
-
-        
 
         <p className="text-center mt-4 text-sm">
           {isLogin
