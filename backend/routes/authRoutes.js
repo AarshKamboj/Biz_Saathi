@@ -77,9 +77,13 @@ router.post("/login", async (req, res) => {
     });
 
   } catch (err) {
-    console.error("LOGIN ERROR:", err); // 👈 IMPORTANT DEBUG
-    res.status(500).json({ message: err.message });
-  }
+  console.error("LOGIN ERROR:", err);
+  res.status(500).json({
+    success: false,
+    error: err.message,
+    stack: err.stack,
+  });
+}
 });
 
 export default router;
