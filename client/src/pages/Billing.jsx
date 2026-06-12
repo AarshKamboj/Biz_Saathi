@@ -75,8 +75,10 @@ const Billing = () => {
         total,
       };
 
+      const API_URL = import.meta.env.VITE_API_URL;
+
       const res = await axios.post(
-        "https://bizsaathi.onrender.com/api/invoice",
+        `${API_URL}/api/invoice`,
         invoiceData
       );
 
